@@ -47,19 +47,19 @@ export default function App() {
 
 
   //  logic for reacting to user clicked our notification
-  useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        // console.log("User Clicked on Notification!");
-        // console.log(response);
-        // console.log(response.notification.request.content.data.userName);
-      }
-    );
+  // useEffect(() => {
+  //   const subscription = Notifications.addNotificationResponseReceivedListener(
+  //     (response) => {
+  //       // console.log("User Clicked on Notification!");
+  //       // console.log(response);
+  //       // console.log(response.notification.request.content.data.userName);
+  //     }
+  //   );
 
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
 
   const scheduleNotificationHandler = () => {
     Notifications.scheduleNotificationAsync({
@@ -74,12 +74,32 @@ export default function App() {
     });
   };
 
+
+  const pushNotificationsHandler = () => {
+    // 
+    fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        to: 'ExponentPushToken[7oO7SYDzcpT_fweGc4yrP3]',
+        title: 'Test title of Push',
+        body: 'Test body of push'
+      })
+    })
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Button
         title="Schedule Notification!"
         onPress={scheduleNotificationHandler}
+      />
+      <Button
+        title="Push notification"
+        onPress={pushNotificationsHandler}
       />
     </View>
   );
@@ -112,7 +132,7 @@ async function registerForPushNotificationsAsync() {
       );
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
+    token = (await Notifications.getExpoPushTokenAsync({projectId:'4672897e-a73c-4b6b-9440-66c9fb3f1afa'})).data;
   } else {
     alert("Must use physical device for Push Notifications");
   }
